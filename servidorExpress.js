@@ -66,16 +66,19 @@ const randomNumber=(getAll)=>{
 
 
 const express = require("express");
-const {Router}=express
+const { Router }=express
 const multer=require("multer")
 const app=express()
 const router = Router()
 const  PORT=8080
+
 const server= app.listen(PORT, ()=>{
     console.log(`Servidor http escuchando en el puerto ${server.address().port}`)
 
 })
+app.use(express.static('public'))
 server.on("error", error=> console.log(`Error en servidor ${error}`))
+
 app.get("/productos",(req,resp)=>{
     resp.send(JSON.stringify(getAll))
 })
@@ -104,14 +107,17 @@ function Middleware1(req,res,next){
     req.nameProduct=document.getElementById("nameProduct").value
     req.priceProduct=document.getElementById("priceProduct").value
     next()
+    
 }
 app.post('/',Middleware1, (req,res)=>{
     let nameProduct=req.nameProduct
     let priceProduct=req.priceProduct
     
     items.save(nameProduct,priceProduct)
+    console.log("hl")
     res.json(JSON.stringify(items.getById(usuarios.length-1)))
 })
+
 router.put('/productos', (req,res)=>{
     
 })
@@ -132,7 +138,7 @@ var storage = multer.diskStorage({
     }
 })
 var upload = multer({storage:storage})
-/* app.post('/uploadfile', upload.single('myfile'),(req,res,next)=>{
+/* app.post('/productos', upload.single('myfile'),(req,res,next)=>{
     const file =req.file
     if(!file){
         const error=new Error("cargue algun archivo")
