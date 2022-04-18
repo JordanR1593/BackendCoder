@@ -1,3 +1,1 @@
-[{"nombre":"bolso","precio":10,"id":1},
-    {"nombre":"chaqueta","precio":11,"id":2},
-    {"nombre":"jean","precio":12,"id":3}]
+[{"nombre":"bolso","precio":10,"id":1},{"nombre":"chaqueta","precio":11,"id":2},{"nombre":"jean","precio":12,"id":3},{"nombre":"correa","precio":"25","id":4},{"nombre":"zapato","precio":"12","id":5},{"nombre":"zapato","precio":"12","id":6}]

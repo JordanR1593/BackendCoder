@@ -7,11 +7,19 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Formulario</h1>
-    <form id="form" action="/" enctype="multipart/form-data" method="post">
-        <input id="nameProduct" type="text">Ingrese nombre de producto
-        <input id="priceProduct" type="text">Ingrese precio del producto
-        <button type="submit" onclick="Middleware1()">Check</button>
+    <h1>Formularios</h1>
+    <h2>Formulario creacion de productos</h2>
+    <form id="form" action="/api/productos"  method="POST">
+        <input name="nameProduct" type="text">Ingrese nombre de producto
+        <input name="priceProduct" type="text">Ingrese precio del producto
+        <button type="submit" ">Check</button>
+    </form>
+    <h2>Formulario Edicion de productos</h2>
+    <form id="form" action="/api/productos"  method="">
+        <input name="idProduct" type="text">Ingrese el id del producto
+        <input name="nameProduct1" type="text">Ingrese el nuevo nombre de producto
+        <input name="priceProduct1" type="text">Ingrese el nuevo precio del producto
+        <button type="submit" >Edit</button>
     </form>
     <script src="../servidorExpress.js"></script>
 </body>

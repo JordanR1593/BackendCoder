@@ -4,21 +4,25 @@ const fs= require("fs")
 class Productos {
     constructor(){
         this.nombreArchivo=`./productos.json`;
-        this.id=1
+        this.id=0
 }
 
     save(nombre,precio){
-        let usuario= {nombre:nombre,precio:precio,id:this.id}
-        let usuarios=[]
+       
+        let productos=[]
     try {
         let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-        usuarios=JSON.parse(file)
+        productos=JSON.parse(file)
     } catch (error) {
         console.log('No hay archivo')
     }
-    usuarios.push(usuario)
-        this.id++
-    fs.writeFileSync(this.nombreArchivo, JSON.stringify(usuarios))
+    productos.length>0?this.id=productos.length+1:this.id=1
+    let producto= {nombre:nombre,precio:precio,id:this.id}
+   
+    productos.push(producto)
+    
+            
+    fs.writeFileSync(this.nombreArchivo, JSON.stringify(productos))
 }
 
     getById(id){
@@ -38,16 +42,52 @@ class Productos {
     return usuario
     }
      getAll(){
+        let productos=[]
+        try {
+            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
+            productos=JSON.parse(file)
+        } catch (error) {
+            console.log('No hay archivo')
+        }
+        return productos
+     }
+     editById(id,nombre,precio){
         let usuarios=[]
+        let usuario=null
         try {
             let file = fs.readFileSync(this.nombreArchivo,'utf-8')
             usuarios=JSON.parse(file)
         } catch (error) {
             console.log('No hay archivo')
         }
-        return usuarios
-     }
-     
+        usuarios.forEach(user => {
+        if(user.id==id){
+            usuario=user
+            usuario.nombre=nombre
+            usuario.price=precio
+        }
+    });
+    return usuarios
+    }
+    deleteById(id){
+        let usuarios=[]
+        
+        try {
+            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
+            usuarios=JSON.parse(file)
+        } catch (error) {
+            console.log('No hay archivo')
+        }
+        usuarios.forEach(user => {
+        if(user.id=!id){
+            usuarios.push(user)
+            
+        }
+        
+    });
+    fs.writeFileSync(this.nombreArchivo, JSON.stringify(usuarios))
+    
+    }
      
 }
 
@@ -64,13 +104,17 @@ const randomNumber=(getAll)=>{
 }
 
 
-
+ 
 const express = require("express");
 const {Router}=express
 const multer=require("multer")
+const bodyParser = require('body-parser')
 const app=express()
 const router = Router()
 const  PORT=8080
+app.use(express.json()) 
+app.use(express.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: false }))
 const server= app.listen(PORT, ()=>{
     console.log(`Servidor http escuchando en el puerto ${server.address().port}`)
 
@@ -100,30 +144,26 @@ router.use(function(err,req,res,next){
     res.status(500).send("El producto no encontrado")
 })
 
-function Middleware1(req,res,next){
-    req.nameProduct=document.getElementById("nameProduct").value
-    req.priceProduct=document.getElementById("priceProduct").value
-    next()
-}
-app.post('/',Middleware1, (req,res)=>{
-    let nameProduct=req.nameProduct
-    let priceProduct=req.priceProduct
-    
-    items.save(nameProduct,priceProduct)
-    res.json(JSON.stringify(items.getById(usuarios.length-1)))
-})
+
+
 router.put('/productos', (req,res)=>{
-    
+    let nameProduct = req.body.nameProduct1
+    let priceProduct= req.body.priceProduct1
+    let idProduct= req.body.idProduct
+    console.log("esto es"+nameProduct+ priceProduct+ idProduct)
+    let modificacionProducto=items.editById(idProduct,nameProduct,priceProduct)
+    res.send(JSON.stringify(modificacionProducto))
 })
-router.delete('/productos', (req,res)=>{
-    
+app.delete('/productos/:id', (req,res)=>{
+    items.deleteById(req.params.id)
+    res.send(JSON.stringify(items.getAll()))
 })
 app.use('/api',router)
 
-app.get("/",function(req,res){
+router.get("/",function(req,res){
     res.sendFile(__dirname + '/public/index.html')
 })
-var storage = multer.diskStorage({
+/* var storage = multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,"uploads")
     },
@@ -131,13 +171,10 @@ var storage = multer.diskStorage({
         cb(null, file.fieldname +'-'+Date.now())
     }
 })
-var upload = multer({storage:storage})
-/* app.post('/uploadfile', upload.single('myfile'),(req,res,next)=>{
-    const file =req.file
-    if(!file){
-        const error=new Error("cargue algun archivo")
-        error.httpStatusCode=400
-        return next(error)
-    }
-    res.send(file)
-}) */
+var upload = multer({storage:storage}) */
+router.post('/productos',(req,res)=>{
+    let nameProduct = req.body.nameProduct
+    let priceProduct= req.body.priceProduct
+    items.save(nameProduct,priceProduct)
+    res.send(JSON.stringify(items.getAll()))
+}) 
