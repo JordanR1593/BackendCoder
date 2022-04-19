@@ -70,6 +70,7 @@ class Productos {
     return usuarios
     }
     deleteById(id){
+        let users=[]
         let usuarios=[]
         
         try {
@@ -79,13 +80,13 @@ class Productos {
             console.log('No hay archivo')
         }
         usuarios.forEach(user => {
-        if(user.id=!id){
-            usuarios.push(user)
+        if(user.id!=id){
+            users.push(user)
             
         }
         
     });
-    fs.writeFileSync(this.nombreArchivo, JSON.stringify(usuarios))
+    return users
     
     }
      
@@ -147,16 +148,18 @@ router.use(function(err,req,res,next){
 
 
 router.put('/productos', (req,res)=>{
-    let nameProduct = req.body.nameProduct1
-    let priceProduct= req.body.priceProduct1
+    let nameProduct = req.body.nameProduct
+    let priceProduct= req.body.priceProduct
     let idProduct= req.body.idProduct
-    console.log("esto es"+nameProduct+ priceProduct+ idProduct)
+    console.log("esto es "+nameProduct+"-"+ priceProduct+"-"+ idProduct)
     let modificacionProducto=items.editById(idProduct,nameProduct,priceProduct)
     res.send(JSON.stringify(modificacionProducto))
 })
-app.delete('/productos/:id', (req,res)=>{
-    items.deleteById(req.params.id)
-    res.send(JSON.stringify(items.getAll()))
+router.delete('/productos/', (req,res)=>{
+    let idProduct= req.body.idProduct
+    console.log(idProduct)
+    let deleteByid=items.deleteById(idProduct)
+    res.send(JSON.stringify(deleteByid))
 })
 app.use('/api',router)
 
