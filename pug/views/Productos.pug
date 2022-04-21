@@ -1,0 +1,22 @@
+html
+    head
+        title='pug Productos'
+    body 
+        =mensaje
+        <table>
+        <tr> 
+              <td><strong>Producto</strong></td>
+              <td><strong>Precio </strong></td>
+        
+          
+        </tr>
+        
+        {{#each suggestedChamps}}
+            <tr>
+                <td >{{this.nombre}}</td>
+            <td>{{this.precio}}</td>
+            </tr>
+            
+            
+        {{/each}}
+    </table>

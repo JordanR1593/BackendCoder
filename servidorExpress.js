@@ -121,17 +121,17 @@ const server= app.listen(PORT, ()=>{
 
 })
 server.on("error", error=> console.log(`Error en servidor ${error}`))
-app.get("/productos",(req,resp)=>{
+/* app.get("/productos",(req,resp)=>{
     resp.send(JSON.stringify(getAll))
-})
-app.get("/productosRandom",(req,resp)=>{
+}) */
+/* app.get("/productosRandom",(req,resp)=>{
     resp.send(randomNumber(getAll))
-})
-router.get('/productos', (req,res)=>{
+}) */
+/* router.get('/productos', (req,res)=>{
     res.send(JSON.stringify(getAll))
-})
+}) */
 
-router.get('/productos/:id', (req,res)=>{
+/* router.get('/productos/:id', (req,res)=>{
     if (items.getById(req.params.id)==null){
         throw error
         
@@ -139,33 +139,33 @@ router.get('/productos/:id', (req,res)=>{
         res.send(JSON.stringify(items.getById(req.params.id)))
     }
     
-})
-router.use(function(err,req,res,next){
+}) */
+/* router.use(function(err,req,res,next){
         console.error(err.stack)
     res.status(500).send("El producto no encontrado")
-})
+}) */
 
 
 
-router.put('/productos', (req,res)=>{
+/* router.put('/productos', (req,res)=>{
     let nameProduct = req.body.nameProduct
     let priceProduct= req.body.priceProduct
     let idProduct= req.body.idProduct
     console.log("esto es "+nameProduct+"-"+ priceProduct+"-"+ idProduct)
     let modificacionProducto=items.editById(idProduct,nameProduct,priceProduct)
     res.send(JSON.stringify(modificacionProducto))
-})
-router.delete('/productos/', (req,res)=>{
+}) */
+/* router.delete('/productos/', (req,res)=>{
     let idProduct= req.body.idProduct
     console.log(idProduct)
     let deleteByid=items.deleteById(idProduct)
     res.send(JSON.stringify(deleteByid))
-})
-app.use('/api',router)
+}) */
+/* app.use('/api',router)
 
 router.get("/",function(req,res){
     res.sendFile(__dirname + '/public/index.html')
-})
+}) */
 /* var storage = multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,"uploads")
@@ -175,9 +175,12 @@ router.get("/",function(req,res){
     }
 })
 var upload = multer({storage:storage}) */
-router.post('/productos',(req,res)=>{
+/* router.post('/productos',(req,res)=>{
     let nameProduct = req.body.nameProduct
     let priceProduct= req.body.priceProduct
     items.save(nameProduct,priceProduct)
     res.send(JSON.stringify(items.getAll()))
-}) 
+})  */
+app.post('/productos',(req,res)=>{
+    
+})

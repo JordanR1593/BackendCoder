@@ -1,0 +1,15 @@
+{{> header}}
+<br>
+
+
+
+
+<h2>Guardar de producto</h2>
+
+{{#if listExists}}
+    <form id="form" action="/Productos"  method="POST">
+        <input name="nameProduct" type="text">Ingrese nombre de producto
+        <input name="priceProduct" type="text">Ingrese precio del producto
+        <button type="submit" ">Check</button>
+    </form>
+{{/if}}

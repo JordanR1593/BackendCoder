@@ -7,6 +7,14 @@
     <title>Document</title>
 </head>
 <body>
+    <span></span>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+
+    <script>
+         const template = Handlebars.compile('<h1> {{titulo}}</h1>');
+        const html = template({titulo: 'Motores de plantillas'});
+         document.getElementById('nombre').innerHTML = html;
+    </script>
     <h1>Formularios</h1>
     <h2>Formulario creacion de productos</h2>
     <form id="form" action="/api/productos"  method="POST">
@@ -14,13 +22,13 @@
         <input name="priceProduct" type="text">Ingrese precio del producto
         <button type="submit" ">Check</button>
     </form>
-    <h2>Formulario Edicion de productos</h2>
+    <!-- <h2>Formulario Edicion de productos</h2>
     <form id="form" action="/api/productos"  method="">
         <input name="idProduct" type="text">Ingrese el id del producto
         <input name="nameProduct1" type="text">Ingrese el nuevo nombre de producto
         <input name="priceProduct1" type="text">Ingrese el nuevo precio del producto
         <button type="submit" >Edit</button>
-    </form>
+    </form> -->
     <script src="../servidorExpress.js"></script>
 </body>
 </html>
