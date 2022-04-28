@@ -1,6 +1,6 @@
 const fs= require("fs")
-
-
+const handlebars = require('express-handlebars');
+const chat = [];
 class Productos {
     constructor(){
         this.nombreArchivo=`./productos.json`;
@@ -91,96 +91,137 @@ class Productos {
     }
      
 }
+//----------------
 
 let items= new Productos()
 let getAll= items.getAll()
-const randomNumber=(getAll)=>{
+
+
+
+class Chat {
+
+    constructor(){
+        this.nombreArchivo=`./historial.txt`;
+        this.id=0
+    }
+
+    saveChat(nombre,precio){
+       
+        let productos=[]
+    try {
+        let file = fs.readFileSync(this.nombreArchivo,'utf-8')
+        productos=JSON.parse(file)
+    } catch (error) {
+        console.log('No hay archivo')
+    }
+    productos.length>0?this.id=productos.length+1:this.id=1
+    let producto= {usuario:nombre,text:precio}
+   
+    productos.push(producto)
     
-    
-    let randomNumber= Math.floor(Math.random() * (getAll.length+1) )
-    randomNumber>0?randomNumber=randomNumber:randomNumber=1
-    let getById= items.getById(randomNumber)
-    console.log(randomNumber)
-    return (JSON.stringify(getById))
+            
+    fs.writeFileSync(this.nombreArchivo, JSON.stringify(productos))
+}
+getChat(){
+        let productos=[]
+        try {
+            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
+            productos=JSON.parse(file)
+        } catch (error) {
+            console.log('No hay archivo')
+        }
+        return productos
+     }
 }
 
+let chats= new Chat()
+let getChat= chats.getChat()
 
- 
+ chats.saveChat("juan","texto")
 const express = require("express");
-const {Router}=express
-const multer=require("multer")
-const bodyParser = require('body-parser')
-const app=express()
-const router = Router()
+const {Server:HttpServer}=require("http");
+const {Server:IOServer}= require("socket.io");
+
+
+
+const app=express();
+const httpServer= new HttpServer(app);
+const io=new IOServer(httpServer);
+app.use(express.static('./public'))
+
 const  PORT=8080
 app.use(express.json()) 
 app.use(express.urlencoded({ extended: true }))
-app.use(bodyParser.urlencoded({ extended: false }))
-const server= app.listen(PORT, ()=>{
-    console.log(`Servidor http escuchando en el puerto ${server.address().port}`)
 
-})
-server.on("error", error=> console.log(`Error en servidor ${error}`))
-/* app.get("/productos",(req,resp)=>{
-    resp.send(JSON.stringify(getAll))
-}) */
-/* app.get("/productosRandom",(req,resp)=>{
-    resp.send(randomNumber(getAll))
-}) */
-/* router.get('/productos', (req,res)=>{
-    res.send(JSON.stringify(getAll))
-}) */
 
-/* router.get('/productos/:id', (req,res)=>{
-    if (items.getById(req.params.id)==null){
-        throw error
+
+
+
+
+
+io.on('connection',(socket)=>{
+    
+    socket.emit('products',getAll)
+
+    socket.on("new-product", data=>{
         
-    }else{
-        res.send(JSON.stringify(items.getById(req.params.id)))
-    }
-    
-}) */
-/* router.use(function(err,req,res,next){
-        console.error(err.stack)
-    res.status(500).send("El producto no encontrado")
-}) */
-
-
-
-/* router.put('/productos', (req,res)=>{
-    let nameProduct = req.body.nameProduct
-    let priceProduct= req.body.priceProduct
-    let idProduct= req.body.idProduct
-    console.log("esto es "+nameProduct+"-"+ priceProduct+"-"+ idProduct)
-    let modificacionProducto=items.editById(idProduct,nameProduct,priceProduct)
-    res.send(JSON.stringify(modificacionProducto))
-}) */
-/* router.delete('/productos/', (req,res)=>{
-    let idProduct= req.body.idProduct
-    console.log(idProduct)
-    let deleteByid=items.deleteById(idProduct)
-    res.send(JSON.stringify(deleteByid))
-}) */
-/* app.use('/api',router)
-
-router.get("/",function(req,res){
-    res.sendFile(__dirname + '/public/index.html')
-}) */
-/* var storage = multer.diskStorage({
-    destination: function(req,file,cb){
-        cb(null,"uploads")
-    },
-    filename: function (req,file,cb){
-        cb(null, file.fieldname +'-'+Date.now())
-    }
+        getAll.push(data)
+        console.log(getAll)
+        socket.emit("products", getAll)
+    })
 })
-var upload = multer({storage:storage}) */
-/* router.post('/productos',(req,res)=>{
-    let nameProduct = req.body.nameProduct
-    let priceProduct= req.body.priceProduct
-    items.save(nameProduct,priceProduct)
-    res.send(JSON.stringify(items.getAll()))
-})  */
-app.post('/productos',(req,res)=>{
+
+io.on("connection", (socket) => {
+    console.log("Usuario conectado");
+  
+    socket.emit("chat", getChat);
+  
+    socket.on("newChat", (data) => {
+      Date(data)
+      
+      getChat.push(data);
+      socket.emit("chat", getChat);
+    });
+  });
+
+
+app.engine(
+    "hbs", 
+    handlebars.engine({
+        extname: ".hbs",
+        defaultLayout: 'index.hbs',
+        layoutsDir: __dirname + "/views/layouts",
+        partialsDir: __dirname + "/views/partials/"
+    })
+);
+
+app.set('view engine', 'hbs');
+app.set('views', './views');
+
+app.get('/', function (req, res) {
+    console.log("hola")
     
+   res.render('main');    
+})
+app.get("/chat", function (req, res) {
+    res.render("chat");
+  });
+
+/* app.post('/', function (req, res) {
+    let nameProduct = req.body.nameProduct
+    let priceProduct = req.body.priceProduct
+    console.log(nameProduct,priceProduct)
+    
+
+    io.on('submit',(socket)=>{
+    
+        socket.emit('products',getAll)
+    })
+    
+}) */
+
+
+httpServer.listen(PORT, ()=>{
+    console.log(`Servidor http escuchando en el puerto ${httpServer.address().port}`)
+
 })
