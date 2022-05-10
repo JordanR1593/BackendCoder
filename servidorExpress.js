@@ -159,20 +159,18 @@ app.use(express.urlencoded({ extended: true }))
 
 
 
-io.on('connection',(socket)=>{
-    
-    socket.emit('products',getAll)
 
+
+io.on("connection", (socket) => {
+    console.log("Usuario conectado");
+    socket.emit('products',getAll)
+    console.log(getAll)
     socket.on("new-product", data=>{
         
         getAll.push(data)
         console.log(getAll)
         socket.emit("products", getAll)
     })
-})
-
-io.on("connection", (socket) => {
-    console.log("Usuario conectado");
   
     socket.emit("chat", getChat);
   
@@ -201,7 +199,7 @@ app.set('views', './views');
 app.get('/', function (req, res) {
     console.log("hola")
     
-   res.render('main');    
+   res.render("main");    
 })
 app.get("/chat", function (req, res) {
     res.render("chat");

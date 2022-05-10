@@ -2,7 +2,7 @@
   "name": "clase-6",
   "version": "1.0.0",
   "description": "",
-  "main": "servidor.js",
+  "main": "servidorExpress.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node servidorExpress.js"
