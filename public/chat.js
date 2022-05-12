@@ -14,24 +14,27 @@ function renderChat(data) {
       let segundos = fecha.getSeconds() ;
 
       return `<div>
-            <strong><h5>${elem.usuario}:</h5><h6>Menssage sent on ${dia}/${mes}/${año} Time: ${hora}${minutos}${segundos}</h6></strong>
-            <p><em>${elem.text}</em></p>
+            <strong><h5>${elem.name}:</h5><h6>Menssage sent on ${dia}/${mes}/${año} Time: ${hora}${minutos}${segundos}</h6></strong>
+            <p><em>${elem.mensaje}</em></p>
         </div>`;
     })
     .join(" ");
 
   document.getElementById("filaTexto").innerHTML = html;
 }
-function addMessagechat(e) {
+function addMessagechat() {
+  
   const mensaje = {
-    usuario: document.getElementById("username").value,
+    
+    name: document.getElementById("username").value,
 
-    text: document.getElementById("texto").value,
+    mensaje: document.getElementById("texto").value,
   };
-
+console.log(mensaje)
   socket.emit("newChat", mensaje);
   return false;
 }
 socket.on("chat", (data) => {
+  console.log(data)
   renderChat(data);
 });

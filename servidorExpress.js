@@ -1,143 +1,69 @@
-const fs= require("fs")
+
 const handlebars = require('express-handlebars');
-const chat = [];
-class Productos {
+const {createTable} = require('./mariaDB/createTable')
+const {insertMessage} = require('./mariaDB/insert')
+const {getMessage} = require('./mariaDB/get')
+
+const {update} = require('./mariaDB/update')
+const {deleter}=require('./mariaDB/delete')
+//---
+const {createTable3} = require('./sqlite3/createTable')
+const {insertMessage3} = require('./sqlite3/insert')
+const {getMessage3} = require('./sqlite3/get')
+
+const {update3} = require('./sqlite3/update')
+const {deleter3}=require('./sqlite3/delete')
+
+
+class contenedor{
     constructor(){
-        this.nombreArchivo=`./productos.json`;
-        this.id=0
+        
+    }
+    createTable(){
+        createTable3()
+    }
+    
+    getMessage(tabla){
+        getMessage3(tabla)
+    }
+    insertMessage(table,nombre,mensaje){
+        insertMessage3(table,nombre,mensaje)
+    }
+    deleter(){
+        deleter3()
+    }
+    update(table,id,objeto){
+        update(table,id,objeto)
+    }
 }
 
-    save(nombre,precio){
-       
-        let productos=[]
-    try {
-        let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-        productos=JSON.parse(file)
-    } catch (error) {
-        console.log('No hay archivo')
-    }
-    productos.length>0?this.id=productos.length+1:this.id=1
-    let producto= {nombre:nombre,precio:precio,id:this.id}
-   
-    productos.push(producto)
-    
-            
-    fs.writeFileSync(this.nombreArchivo, JSON.stringify(productos))
-}
-
-    getById(id){
-        let usuarios=[]
-        let usuario=null
-        try {
-            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-            usuarios=JSON.parse(file)
-        } catch (error) {
-            console.log('No hay archivo')
-        }
-        usuarios.forEach(user => {
-        if(user.id==id){
-            usuario=user
-        }
-    });
-    return usuario
-    }
-     getAll(){
-        let productos=[]
-        try {
-            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-            productos=JSON.parse(file)
-        } catch (error) {
-            console.log('No hay archivo')
-        }
-        return productos
-     }
-     editById(id,nombre,precio){
-        let usuarios=[]
-        let usuario=null
-        try {
-            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-            usuarios=JSON.parse(file)
-        } catch (error) {
-            console.log('No hay archivo')
-        }
-        usuarios.forEach(user => {
-        if(user.id==id){
-            usuario=user
-            usuario.nombre=nombre
-            usuario.price=precio
-        }
-    });
-    return usuarios
-    }
-    deleteById(id){
-        let users=[]
-        let usuarios=[]
-        
-        try {
-            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-            usuarios=JSON.parse(file)
-        } catch (error) {
-            console.log('No hay archivo')
-        }
-        usuarios.forEach(user => {
-        if(user.id!=id){
-            users.push(user)
-            
-        }
-        
-    });
-    return users
-    
-    }
-     
-}
 //----------------
 
-let items= new Productos()
-let getAll= items.getAll()
+let items= new contenedor()
+let getAll= items.getMessage3('producto') 
 
 
 
 class Chat {
 
     constructor(){
-        this.nombreArchivo=`./historial.txt`;
-        this.id=0
+        
     }
 
-    saveChat(nombre,precio){
-       
-        let productos=[]
-    try {
-        let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-        productos=JSON.parse(file)
-    } catch (error) {
-        console.log('No hay archivo')
+    insertMessage(table,objeto){
+        insertMessage(table,objeto)
     }
-    productos.length>0?this.id=productos.length+1:this.id=1
-    let producto= {usuario:nombre,text:precio}
-   
-    productos.push(producto)
-    
-            
-    fs.writeFileSync(this.nombreArchivo, JSON.stringify(productos))
-}
-getChat(){
-        let productos=[]
-        try {
-            let file = fs.readFileSync(this.nombreArchivo,'utf-8')
-            productos=JSON.parse(file)
-        } catch (error) {
-            console.log('No hay archivo')
-        }
-        return productos
-     }
+    getMessage(tabla){
+        getMessage(tabla)
+    }
+     
 }
 
 let chats= new Chat()
-let getChat= chats.getChat()
-
- chats.saveChat("juan","texto")
+let getChat= chats.getMessage('chat')
+let inserter=(table,objeto)=>{
+    chats.insertMessage(table,objeto)}
+let updater= chats.update(table,id,objeto)
 const express = require("express");
 const {Server:HttpServer}=require("http");
 const {Server:IOServer}= require("socket.io");
@@ -161,26 +87,8 @@ app.use(express.urlencoded({ extended: true }))
 
 
 
-io.on("connection", (socket) => {
-    console.log("Usuario conectado");
-    socket.emit('products',getAll)
-    console.log(getAll)
-    socket.on("new-product", data=>{
-        
-        getAll.push(data)
-        console.log(getAll)
-        socket.emit("products", getAll)
-    })
-  
-    socket.emit("chat", getChat);
-  
-    socket.on("newChat", (data) => {
-      Date(data)
-      
-      getChat.push(data);
-      socket.emit("chat", getChat);
-    });
-  });
+
+
 
 
 app.engine(
@@ -205,19 +113,28 @@ app.get("/chat", function (req, res) {
     res.render("chat");
   });
 
-/* app.post('/', function (req, res) {
-    let nameProduct = req.body.nameProduct
-    let priceProduct = req.body.priceProduct
-    console.log(nameProduct,priceProduct)
-    
 
-    io.on('submit',(socket)=>{
+  io.on("connection", (socket) => {
+    console.log("Usuario conectado");
     
-        socket.emit('products',getAll)
+    socket.emit('products',getMessage)
+    
+    socket.on("new-product", data=>{
+        
+        getAll.push(data)
+        console.log(get('chat'))
+        socket.emit("products",getChat)
     })
-    
-}) */
-
+  
+    socket.emit("chat", getChat);
+  
+    socket.on("newChat", (data) => {
+      Date(data)
+      console.log("hola")
+      inserter("chat",data);
+      socket.emit("chat", getChat);
+    });
+  });
 
 httpServer.listen(PORT, ()=>{
     console.log(`Servidor http escuchando en el puerto ${httpServer.address().port}`)
