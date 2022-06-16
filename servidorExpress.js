@@ -1,63 +1,22 @@
 
+const {contenedor}= require('./contenedor/productos')
+const {Chat} =require('./contenedor/mensaje')
 const handlebars = require('express-handlebars');
-const {createTable} = require('./mariaDB/createTable')
-const {insertMessage} = require('./mariaDB/insert')
-const {getMessage} = require('./mariaDB/get')
-
-const {update} = require('./mariaDB/update')
-const {deleter}=require('./mariaDB/delete')
-//---
-const {createTable3} = require('./sqlite3/createTable')
-const {insertMessage3} = require('./sqlite3/insert')
-const {getMessage3} = require('./sqlite3/get')
-
-const {update3} = require('./sqlite3/update')
-const {deleter3}=require('./sqlite3/delete')
+const router = require('./routes/routeProducto')
+const routerChat = require('./routes/chat')
 
 
-class contenedor{
-    constructor(){
-        
-    }
-    createTable(){
-        createTable3()
-    }
-    
-    getMessage(tabla){
-        getMessage3(tabla)
-    }
-    insertMessage(table,nombre,mensaje){
-        insertMessage3(table,nombre,mensaje)
-    }
-    deleter(){
-        deleter3()
-    }
-    update(table,id,objeto){
-        update(table,id,objeto)
-    }
-}
+
+
 
 //----------------
 
 let items= new contenedor()
-let getAll= items.getMessage3('producto') 
+let getAll= items.get('producto') 
 
 
 
-class Chat {
 
-    constructor(){
-        
-    }
-
-    insertMessage(table,objeto){
-        insertMessage(table,objeto)
-    }
-    getMessage(tabla){
-        getMessage(tabla)
-    }
-     
-}
 
 let chats= new Chat()
 let getChat= chats.getMessage('chat')
@@ -78,8 +37,8 @@ app.use(express.static('./public'))
 const  PORT=8080
 app.use(express.json()) 
 app.use(express.urlencoded({ extended: true }))
-
-
+app.use('/api/productos-test',router)
+app.use('/api/chat',routerChat)
 
 
 
@@ -104,14 +63,7 @@ app.engine(
 app.set('view engine', 'hbs');
 app.set('views', './views');
 
-app.get('/', function (req, res) {
-    console.log("hola")
-    
-   res.render("main");    
-})
-app.get("/chat", function (req, res) {
-    res.render("chat");
-  });
+
 
 
   io.on("connection", (socket) => {

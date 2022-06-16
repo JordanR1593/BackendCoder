@@ -1,11 +1,13 @@
 const socket=io.connect()
-
+const ApiProductosMock = require('../api/productos')
+const apiProductos = new ApiProductosMock()
 function addNew(e){
     
     const newProduct = {
         
-        nombre: document.getElementById("nameProduct").value ,
-        precio: document.getElementById("priceProduct").value 
+        nombre: apiProductos.aleatorio.nombre ,
+        precio: apiProductos.aleatorio.precio,
+        imagen: apiProductos.aleatorio.image
     }
     socket.emit("new-product", newProduct)
     return false
@@ -17,6 +19,7 @@ function render(data){
             `<div>
             <strong>${elem.nombre}</strong>
             <em>${elem.precio}</em>
+            <img src="${elem.imagen}">
             
             </div>`
         )
