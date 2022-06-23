@@ -1,5 +1,5 @@
 
-import * as model from './model/chat.js'
+import * as model from './model/SchemaLogin.js'
  
 
 async function deleteChat(){
@@ -8,7 +8,7 @@ async function deleteChat(){
 
         console.log('DELETE');
         
-        const chatdeleted = await model.chats.deleteOne(
+        const chatdeleted = await model.chats.deleteMany(
             {apellido:'cardona'},
             
         );

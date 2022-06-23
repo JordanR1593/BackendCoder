@@ -1,5 +1,5 @@
 
-import * as model from './model/chat.js'
+import * as model from './model/SchemaLogin.js'
  
 
 async function getChat(){

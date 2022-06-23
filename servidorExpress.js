@@ -1,9 +1,9 @@
 
 const {contenedor}= require('./contenedor/productos')
-const {Chat} =require('./contenedor/mensaje')
+
 const handlebars = require('express-handlebars');
 const router = require('./routes/routeProducto')
-const routerChat = require('./routes/chat')
+const MongoStore = require('connect-mongo')
 
 
 
@@ -18,11 +18,7 @@ let getAll= items.get('producto')
 
 
 
-let chats= new Chat()
-let getChat= chats.getMessage('chat')
-let inserter=(table,objeto)=>{
-    chats.insertMessage(table,objeto)}
-let updater= chats.update(table,id,objeto)
+
 const express = require("express");
 const {Server:HttpServer}=require("http");
 const {Server:IOServer}= require("socket.io");
@@ -38,7 +34,15 @@ const  PORT=8080
 app.use(express.json()) 
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/productos-test',router)
-app.use('/api/chat',routerChat)
+
+
+app.use(session({
+  store:MongoStore.create({mongourl:'mongodb://localhost/sesiones'}),
+  secret:'coderhouse',
+  resave:false,
+  saveUninitializeed:false
+}))
+
 
 
 
@@ -66,27 +70,7 @@ app.set('views', './views');
 
 
 
-  io.on("connection", (socket) => {
-    console.log("Usuario conectado");
-    
-    socket.emit('products',getMessage)
-    
-    socket.on("new-product", data=>{
-        
-        getAll.push(data)
-        console.log(get('chat'))
-        socket.emit("products",getChat)
-    })
   
-    socket.emit("chat", getChat);
-  
-    socket.on("newChat", (data) => {
-      Date(data)
-      console.log("hola")
-      inserter("chat",data);
-      socket.emit("chat", getChat);
-    });
-  });
 
 httpServer.listen(PORT, ()=>{
     console.log(`Servidor http escuchando en el puerto ${httpServer.address().port}`)

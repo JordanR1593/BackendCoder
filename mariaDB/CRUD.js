@@ -23,13 +23,13 @@ async function CRUD(){
         //getChatById("cardona")
 
         //////////////GETALL///////////////////
-        getChat()
+        //getChat()
 
         //////////////UPDATE///////////////////
         //updateChat()
 
         //////////////DELETE///////////////////
-        //deleteChat()
+        deleteChat()
         
     } catch (error) {
         console.log(`'Error en el CRUD: ${error}`);
