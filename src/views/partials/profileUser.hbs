@@ -1,0 +1,26 @@
+<h2>User Profile</h2>
+
+{{#if isUser}}
+    <div>
+        <div>
+            <h1>USER OK LOGIN!</h1>
+            <h2><i>Bienvenido {{user.username}}</i></h2>
+            <h3>Nombre: {{user.firstName}}</h3>
+            <h3>Apellido: {{user.lastName}}</h3>
+            <h3>Email:{{user.enmail}}</h3>
+            <form action="/logout">
+                <div>
+                    <button>LOGOUT</button>
+                </div>
+            </form>
+
+
+
+
+        </div>
+
+
+
+
+    </div>
+    {{/if}}
