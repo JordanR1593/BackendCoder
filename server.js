@@ -15,6 +15,8 @@ const { application } = require('express');
 const { log } = require('console');
 const LocalStrategy = require('passport-local').Strategy
 
+const createdObject=require('./api/numerosAleatorios')
+
 const app= express()
 
 app.use(session({
@@ -133,6 +135,21 @@ app.get('/ruta-protegida', routes.checkAuthentication,(req,res)=>{
     res.render('protected')
 })
 
+app.get('/info',(req,res)=>{
+    res.send({
+        plataforma:process.platform,
+        versionNode:process.version,
+        memoria:process.memoryUsage(),
+        directorio:process.cwd(),
+        pid:process.pid
+
+    })
+})
+
+app.get('./api/randoms/?id',(req,res)=>{
+    
+    res.send(createdObject(req.params.id))
+})
 app.get('*',routes.failRoute)
 
 const server= app.listen(8080,()=>{
