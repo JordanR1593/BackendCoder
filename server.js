@@ -2,6 +2,8 @@ const {validatePass} = require('./src/utils/passValidator');
 const {createHash} = require('./src/utils/hashGenerator')
 const express = require('express');
 const session = require('express-session');
+const winston = require('winston');
+const compression= require('compression')
 
 const modelousuario = require('./src/models/usuarios')
 const {TIEMPO_EXPIRACION}= require('./src/config/globals');
@@ -18,7 +20,7 @@ const LocalStrategy = require('passport-local').Strategy
 const createdObject=require('./api/numerosAleatorios')
 
 const app= express()
-
+app.use(compression())
 app.use(session({
     secret: 'coder',
     cookie:{
@@ -134,16 +136,89 @@ app.get('/profile', routes.getProfile)
 app.get('/ruta-protegida', routes.checkAuthentication,(req,res)=>{
     res.render('protected')
 })
-
-app.get('/info',(req,res)=>{
-    res.send({
-        plataforma:process.platform,
-        versionNode:process.version,
-        memoria:process.memoryUsage(),
-        directorio:process.cwd(),
-        pid:process.pid
-
+app.get('/winstonInfo', (req, res) => {
+    const logger = winston.createLogger({
+        level: 'warn',
+        transports: [
+            new winston.transports.Console( { level: 'info' }),
+            
+        ]
     })
+
+  
+    logger.log('info', 'Log info');
+    logger.log('warn', 'Log warn');
+    logger.log('error', 'Log error');
+
+    //logger.info('Log info')
+
+    
+
+    res.send({response: 'hola coders info'});
+})
+
+app.get('/winstonWarning', (req, res) => {
+    const logger = winston.createLogger({
+        level: 'warn',
+        transports: [
+            
+            new winston.transports.File( { filename: 'warn.log',  level: 'warning' }),
+        ]
+    })
+
+    
+    logger.log('warn', 'Log warn');
+    logger.log('error', 'Log error');
+
+    //logger.info('Log info')
+
+    
+
+    res.send({response: 'hola coders warn'});
+})
+
+app.get('/winstonError', (req, res) => {
+    const logger = winston.createLogger({
+        level: 'warn',
+        transports: [
+            
+            new winston.transports.File( { filename: 'error.log',  level: 'error' }),
+        ]
+    })
+
+    
+   
+    logger.log('error', 'Log error error');
+
+    //logger.info('Log info')
+
+    
+
+    res.send({response: 'hola coders'});
+})
+
+app.get('/info/?modo',(req,res)=>{
+    if(req.params.modo=='compression'){
+        app.use(compression())
+        res.send({
+            plataforma:process.platform,
+            versionNode:process.version,
+            memoria:process.memoryUsage(),
+            directorio:process.cwd(),
+            pid:process.pid
+    
+        })
+    }else{
+        res.send({
+            plataforma:process.platform,
+            versionNode:process.version,
+            memoria:process.memoryUsage(),
+            directorio:process.cwd(),
+            pid:process.pid
+    
+        })
+    }
+    
 })
 
 app.get('./api/randoms/?id',(req,res)=>{
